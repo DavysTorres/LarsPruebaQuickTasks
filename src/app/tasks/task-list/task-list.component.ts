@@ -1,28 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { TaskService } from '../task.service';
+// src/app/task-list/task-list.component.ts
+import { Component, Input } from '@angular/core';
 import { Task } from '../../models/task.model';
-
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-task-list',
-  templateUrl: './task-list.component.html'
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './task-list.component.html',
+  styleUrls: ['./task-list.component.css']
 })
-export class TaskListComponent implements OnInit {
-  tasks: Task[] = [];
-  searchTerm: string = '';
-
-  constructor(private taskService: TaskService) { }
-
-  ngOnInit(): void {
-    this.loadTasks();
-  }
-
-  loadTasks(): void {
-    this.taskService.getTasks().subscribe((tasks) => (this.tasks = tasks));
-  }
+export class TaskListComponent {
+  @Input() tasks: Task[] = [];
+  searchQuery: string = '';
 
   filterTasks(): Task[] {
-    return this.tasks.filter(task => task.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
+    return this.tasks.filter(task =>
+      task.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+  }
+
+  editTask(task: Task) {
+    // Lógica para editar tarea
+  }
+
+  deleteTask(id: number) {
+    // Lógica para eliminar tarea
   }
 }

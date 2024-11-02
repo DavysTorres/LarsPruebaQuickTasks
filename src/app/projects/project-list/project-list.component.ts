@@ -1,27 +1,27 @@
+// src/app/project-list/project-list.component.ts
 import { Component, OnInit } from '@angular/core';
-import { ProjectService } from '../project.service';
 import { Project } from '../../models/project.model';
-
+import { ProjectService } from '../project.service';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-project-list',
-  templateUrl: './project-list.component.html'
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl:'./project-list.component.html' ,
+  styleUrls: ['./project-list.component.css']
 })
 export class ProjectListComponent implements OnInit {
   projects: Project[] = [];
 
-  constructor(private projectService: ProjectService) { }
+  constructor(private projectService: ProjectService) {}
 
   ngOnInit(): void {
-    this.loadProjects();
+    this.projectService.projects$.subscribe((projects) => this.projects = projects);
   }
 
-  loadProjects(): void {
-    this.projectService.getProjects().subscribe((projects) => (this.projects = projects));
-  }
+  viewProject(id: number) {
 
-  deleteProject(id: number): void {
-    this.projectService.deleteProject(id).subscribe(() => this.loadProjects());
   }
 }
