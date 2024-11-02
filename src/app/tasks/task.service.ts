@@ -1,36 +1,33 @@
-
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Task } from '../models/task.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  private tasks: Task[] = [];
-  private tasksSubject = new BehaviorSubject<Task[]>(this.tasks);
-  tasks$ = this.tasksSubject.asObservable();
+  private apiUrl = 'api/tasks';
 
-  addTask(task: Task) {
-    task.id = this.tasks.length + 1;
-    this.tasks.push(task);
-    this.tasksSubject.next(this.tasks);
+  constructor(private http: HttpClient) {}
+
+  getTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(this.apiUrl);
   }
 
-  editTask(updatedTask: Task) {
-    const index = this.tasks.findIndex(t => t.id === updatedTask.id);
-    if (index > -1) {
-      this.tasks[index] = updatedTask;
-      this.tasksSubject.next(this.tasks);
-    }
+  getTaskById(id: number): Observable<Task> {
+    return this.http.get<Task>(`${this.apiUrl}/${id}`);
   }
 
-  deleteTask(id: number) {
-    this.tasks = this.tasks.filter(t => t.id !== id);
-    this.tasksSubject.next(this.tasks);
+  createTask(task: Task): Observable<Task> {
+    return this.http.post<Task>(this.apiUrl, task);
   }
 
-  getTasksByProjectId(projectId: number): Task[] {
-    return this.tasks.filter(task => task.projectId === projectId);
+  updateTask(task: Task): Observable<Task> {
+    return this.http.put<Task>(`${this.apiUrl}/${task.id}`, task);
+  }
+
+  deleteTask(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

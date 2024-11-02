@@ -1,0 +1,7 @@
+<h2>{{ project.id ? 'Edit Project' : 'New Project' }}</h2>
+<form (ngSubmit)="save()">
+  <label for="name">Project Name:</label>
+  <input type="text" [(ngModel)]="project.nombre" name="nombre" required>
+  <button type="submit">{{ project.id ? 'Update' : 'Create' }}</button>
+</form>
+<a routerLink="/projects">Cancel</a>

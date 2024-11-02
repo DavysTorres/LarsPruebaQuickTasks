@@ -1,36 +1,33 @@
-
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Project } from '../models/project.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
-  private projects: Project[] = [];
-  private projectsSubject = new BehaviorSubject<Project[]>(this.projects);
-  projects$ = this.projectsSubject.asObservable();
+  private apiUrl = 'api/projects';
 
-  addProject(project: Project) {
-    project.id = this.projects.length + 1;
-    this.projects.push(project);
-    this.projectsSubject.next(this.projects);
+  constructor(private http: HttpClient) {}
+
+  getProyectos(): Observable<Project[]> {
+    return this.http.get<Project[]>(this.apiUrl);
   }
 
-  editProject(updatedProject: Project) {
-    const index = this.projects.findIndex(p => p.id === updatedProject.id);
-    if (index > -1) {
-      this.projects[index] = updatedProject;
-      this.projectsSubject.next(this.projects);
-    }
+  getProjectById(id: number): Observable<Project> {
+    return this.http.get<Project>(`${this.apiUrl}/${id}`);
   }
 
-  deleteProject(id: number) {
-    this.projects = this.projects.filter(p => p.id !== id);
-    this.projectsSubject.next(this.projects);
+  createProject(project: Project): Observable<Project> {
+    return this.http.post<Project>(this.apiUrl, project);
   }
 
-  getProjectById(id: number): Project | undefined {
-    return this.projects.find(p => p.id === id);
+  updateProject(project: Project): Observable<Project> {
+    return this.http.put<Project>(`${this.apiUrl}/${project.id}`, project);
+  }
+
+  deleteProject(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

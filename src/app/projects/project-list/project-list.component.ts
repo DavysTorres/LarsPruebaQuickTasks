@@ -1,15 +1,14 @@
-// src/app/project-list/project-list.component.ts
 import { Component, OnInit } from '@angular/core';
-import { Project } from '../../models/project.model';
 import { ProjectService } from '../project.service';
-import { CommonModule } from '@angular/common';
+import { Project } from '../../models/project.model';
+import { RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl:'./project-list.component.html' ,
+  imports: [RouterModule],
+  templateUrl: './project-list.component.html',
   styleUrls: ['./project-list.component.css']
 })
 export class ProjectListComponent implements OnInit {
@@ -18,10 +17,18 @@ export class ProjectListComponent implements OnInit {
   constructor(private projectService: ProjectService) {}
 
   ngOnInit(): void {
-    this.projectService.projects$.subscribe((projects) => this.projects = projects);
+    this.loadProjects();
   }
 
-  viewProject(id: number) {
+  loadProjects() {
+    this.projectService.getProyectos().subscribe(projects => {
+      this.projects = projects;
+    });
+  }
 
+  deleteProject(projectId: number) {
+    this.projectService.deleteProject(projectId).subscribe(() => {
+      this.loadProjects();
+    });
   }
 }
